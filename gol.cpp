@@ -79,9 +79,14 @@ bool GOL::newState(const QVector<QVector<bool> > &grid, int i, int j)
         }
     }
 
-    if(neighborSum<2) return false;
-    if(neighborSum<4) return true;
-    return false;
+    if(grid[i][j]) {
+        if(neighborSum<2) return false; // Alive, fewer than 2
+        if(neighborSum<4) return true;  // Alive, 2 or 3
+        return false; // Alive, more than 3
+    } else {
+        if(neighborSum==3) return true; // Dead, exactly 3
+        return false; // Dead, not 3
+    }
 }
 
 void GOL::step()
