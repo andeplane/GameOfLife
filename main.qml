@@ -59,6 +59,12 @@ ApplicationWindow {
             width: Math.min(parent.width-startButton.width, parent.height)
             height: width
             size: sizeSlider.value
+            Label {
+                y: 10
+                text: "Click to toggle grid"
+                visible: gol.isEmpty
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
         }
     }
 

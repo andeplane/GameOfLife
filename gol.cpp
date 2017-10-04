@@ -5,7 +5,7 @@
 #include <cmath>
 
 GOL::GOL(QQuickItem *parent) : QQuickPaintedItem(parent),
-    m_size(0)
+    m_size(0), m_isEmpty(true)
 {
     setAcceptedMouseButtons(Qt::AllButtons);
     setAcceptHoverEvents(true);
@@ -40,6 +40,15 @@ void GOL::setSize(int size)
     m_size = size;
     emit sizeChanged(m_size);
     resize();
+}
+
+void GOL::setIsEmpty(bool isEmpty)
+{
+    if (m_isEmpty == isEmpty)
+            return;
+
+        m_isEmpty = isEmpty;
+        emit isEmptyChanged(m_isEmpty);
 }
 
 void GOL::togglePoint(double x, double y)
@@ -92,7 +101,6 @@ bool GOL::newState(const QVector<QVector<bool> > &grid, int i, int j)
 void GOL::step()
 {
     m_oldGrid.swap(m_grid);
-
     for(auto i=0; i<m_size; i++) {
         for(auto j=0; j<m_size; j++) {
             m_grid[i][j] = newState(m_oldGrid, i, j);
@@ -111,15 +119,23 @@ void GOL::reset()
     update();
 }
 
+bool GOL::isEmpty() const
+{
+    return m_isEmpty;
+}
+
 void GOL::paint(QPainter *painter)
 {
     QImage image(m_size, m_size, QImage::Format_RGBA8888);
     QColor color = "white";
+    bool hasLiveCells = false;
     for(auto i = 0; i < m_size; i++) {
         for(auto j = 0; j< m_size; j++) {
             image.setPixel(i, j, m_grid[i][j]*color.rgba());
+            hasLiveCells |= m_grid[i][j];
         }
     }
+    setIsEmpty(!hasLiveCells);
 
     painter->drawImage(boundingRect(), image);
 }
