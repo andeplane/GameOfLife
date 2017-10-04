@@ -9,6 +9,8 @@ GOL::GOL(QQuickItem *parent) : QQuickPaintedItem(parent),
 {
     setAcceptedMouseButtons(Qt::AllButtons);
     setAcceptHoverEvents(true);
+    m_lastClicked.first = -1;
+    m_lastClicked.second = -1;
 }
 
 int GOL::size() const
@@ -22,6 +24,12 @@ void GOL::mousePressEvent(QMouseEvent *event)
     togglePoint(event->x(), event->y());
 }
 
+void GOL::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+    m_lastClicked.first = -1;
+    m_lastClicked.second = -1;
+}
 
 void GOL::mouseMoveEvent(QMouseEvent *event)
 {
@@ -45,10 +53,10 @@ void GOL::setSize(int size)
 void GOL::setIsEmpty(bool isEmpty)
 {
     if (m_isEmpty == isEmpty)
-            return;
+        return;
 
-        m_isEmpty = isEmpty;
-        emit isEmptyChanged(m_isEmpty);
+    m_isEmpty = isEmpty;
+    emit isEmptyChanged(m_isEmpty);
 }
 
 void GOL::togglePoint(double x, double y)
@@ -57,7 +65,12 @@ void GOL::togglePoint(double x, double y)
     int row = m_size * y / height();
     column = std::min(column, m_size-1);
     row = std::min(row, m_size-1);
+    if(column==m_lastClicked.first && row==m_lastClicked.second) {
+        return;
+    }
     m_grid[column][row] = !m_grid[column][row];
+    m_lastClicked.first = column;
+    m_lastClicked.second = row;
     update();
 }
 

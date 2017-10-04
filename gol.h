@@ -1,6 +1,7 @@
 #ifndef GOL_H
 #define GOL_H
 #include <QQuickPaintedItem>
+#include <QPair>
 
 class GOL : public QQuickPaintedItem
 {
@@ -15,7 +16,6 @@ public:
     Q_INVOKABLE void step();
     Q_INVOKABLE void reset();
 
-
 signals:
     void sizeChanged(int size);
     void isEmptyChanged(bool isEmpty);
@@ -27,16 +27,17 @@ public slots:
 private:
     QVector<QVector<bool>> m_grid;
     QVector<QVector<bool>> m_oldGrid;
+    QPair<int,int> m_lastClicked;
     int m_size;
     bool m_isEmpty;
     bool newState(const QVector<QVector<bool>> &grid, int i, int j);
     void togglePoint(double x, double y);
     void resize();
 
-
 protected:
     virtual void mousePressEvent(QMouseEvent *event) override;
     virtual void mouseMoveEvent(QMouseEvent *event) override;
+    virtual void mouseReleaseEvent(QMouseEvent *event) override;
 };
 
 #endif // GOL_H
